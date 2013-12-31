@@ -10,6 +10,8 @@ use Regexp::Common qw(URI);
 
 use OTRS::Repository::Source;
 
+our $VERSION = 0.01;
+
 our $ALLOWED_SCHEME = 'HTTP';
 
 has sources => ( is => 'ro', required => 1, isa => sub {

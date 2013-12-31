@@ -8,6 +8,8 @@ use HTTP::Tiny;
 use XML::LibXML;
 use Regexp::Common qw(URI);
 
+our $VERSION = 0.01;
+
 our $ALLOWED_SCHEME = 'HTTP';
 
 has url     => ( is => 'ro', required => 1, isa     => sub { die "No valid URI" unless $_[0] =~ m{\A$RE{URI}{$ALLOWED_SCHEME}\z} } );
