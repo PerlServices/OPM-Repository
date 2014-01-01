@@ -1,5 +1,7 @@
 package OTRS::Repository::Source;
 
+# ABSTRACT: Parser for a single otrs.xml file
+
 use strict;
 use warnings;
 

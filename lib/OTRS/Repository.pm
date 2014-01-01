@@ -1,5 +1,7 @@
 package OTRS::Repository;
 
+# ABSTRACT: parse OTRS repositories' otrs.xml files to search for add ons
+
 use strict;
 use warnings;
 
@@ -55,3 +57,48 @@ sub BUILDARGS {
 }
 
 1;
+
+=head1 SYNOPSIS
+
+  use OTRS::Repository;
+  
+  my $repo = OTRS::Repository->new(
+      sources => [qw!
+          http://opar.perl-services.de/otrs.xml
+          http://ftp.otrs.org/pub/otrs/packages/otrs.xml
+          http://ftp.otrs.org/pub/otrs/itsm/packages33/otrs.xml
+      !],
+  );
+  
+  my ($url) = $repo->find(
+    name => 'ITSMCore',
+    otrs => '3.3',
+  );
+  
+  print $url;
+
+=head1 METHODS
+
+=head2 new
+
+C<new> has only one mandatory parameter: I<sources>. This has to be 
+an array reference of URLs for repositories' otrs.xml files.
+
+  my $repo = OTRS::Repository->new(
+      sources => [qw!
+          http://opar.perl-services.de/otrs.xml
+          http://ftp.otrs.org/pub/otrs/packages/otrs.xml
+          http://ftp.otrs.org/pub/otrs/itsm/packages33/otrs.xml
+      !],
+  );
+
+=head2 find
+
+Search for an add on for a given OTRS version in those repositories. It
+returns a list of urls if the add on was found, C<undef> otherwise.
+
+  my @urls = $repo->find(
+    name => 'ITSMCore',
+    otrs => '3.3',
+  );
+
