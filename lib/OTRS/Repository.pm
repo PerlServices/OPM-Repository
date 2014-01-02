@@ -12,7 +12,7 @@ use Regexp::Common qw(URI);
 
 use OTRS::Repository::Source;
 
-our $VERSION = 0.01;
+our $VERSION = 0.02;
 
 our $ALLOWED_SCHEME = 'HTTP';
 
@@ -100,5 +100,13 @@ returns a list of urls if the add on was found, C<undef> otherwise.
   my @urls = $repo->find(
     name => 'ITSMCore',
     otrs => '3.3',
+  );
+
+Find a specific version
+
+  my @urls = $repo->find(
+    name    => 'ITSMCore',
+    otrs    => '3.3',
+    version => '1.4.8',
   );
 

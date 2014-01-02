@@ -1,6 +1,11 @@
 Change history for OTRS::Repository
 ===================================
 
+0.02 2014-01-02T09:13:55
+
+  + add feature: search for a specific version of a module
+  + use PodWeaver plugin for dzil
+
 0.01 2014-01-01T02:33:13
 
   + initial release

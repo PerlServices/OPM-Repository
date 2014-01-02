@@ -41,4 +41,11 @@ is $master_slave[0], $base_url . '/OTRSMasterSlave-1.4.2.opm', 'MasterSlave for 
 is_deeply [ $source->find( name => 'MultiSMTP', otrs => '3.0' ) ], [], 'MultiSMTP not in Repository';
 is_deeply [ $source->find( name => 'OTRSMasterSlave', otrs => '1.2' ) ], [], 'OTRSMasterSlave not found for OTRS 1.2';
 
+my ($calendar) = $source->find( name => 'Calendar', otrs => '2.4', version => '1.9.4' );
+is $calendar, $base_url . '/Calendar-1.9.4.opm', 'Calendar 1.9.4 for OTRS 2.4';
+
+is_deeply [$source->find( name => 'Calendar', otrs => '3.0', version => '1.9.4' )], [], 'Calendar 1.9.4 not found for OTRS 2.4';
+
+is_deeply [ $source->find() ], [], 'Missing params return empty list';
+
 done_testing();
