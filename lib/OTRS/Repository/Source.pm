@@ -10,7 +10,7 @@ use HTTP::Tiny;
 use XML::LibXML;
 use Regexp::Common qw(URI);
 
-our $VERSION = 0.02;
+our $VERSION = 0.03;
 
 our $ALLOWED_SCHEME = 'HTTP';
 
@@ -32,24 +32,49 @@ sub find {
 
     my $package  = $params{name};
     my $otrs     = $params{otrs};
-    my %packages = %{ $self->packages };
 
     if ( !defined $package || !defined $otrs ) {
         return;
     }
 
-    my $wanted = $params{version};
-
-    if ( $self->has_parsed ) {
-        return if !$packages{$package};
-        return if !$packages{$package}->{$otrs};
-
-        $wanted = $params{version} || $packages{$package}->{$otrs}->{latest};
-
-        return $packages{$package}->{$otrs}->{versions}->{$wanted};
+    if ( !$self->has_parsed ) {
+        $self->_parse( %params );
     }
 
+    my %packages = %{ $self->packages };
+
+    return if !$packages{$package};
+    return if !$packages{$package}->{$otrs};
+
+    my $wanted = $params{version} || $packages{$package}->{$otrs}->{latest};
+    return $packages{$package}->{$otrs}->{versions}->{$wanted};
+}
+
+sub list {
+    my ($self, %params) = @_;
+
+    if ( !$self->has_parsed ) {
+        $self->_parse( %params );
+    }
+
+    my %packages = %{ $self->packages };
+    my $otrs     = $params{otrs};
+
+    my @packages = sort keys %packages;
+
+    if ( $otrs ) {
+        @packages = grep{ $packages{$_}->{$otrs} }@packages;
+    }
+
+    return @packages;
+}
+
+sub _parse {
+    my ($self, %params) = @_;
+
     return if !$self->tree;
+
+    my %packages = %{ $self->packages };
 
     my @repo_packages = $self->tree->findnodes( 'Package' );
     my $base_url      = $self->url;
@@ -76,19 +101,11 @@ sub find {
                       $version => sprintf "%s%s", $base_url, $file,
                     },
                 };
-
-                if ( $name eq $package && $otrs eq $short_version && !$params{version} ) {
-                    $wanted = $version;
-                }
             }
             elsif ( $self->_version_is_newer( $version, $saved_version ) ) {
                 $packages{$name}->{$short_version}->{latest} = $version;
                 $packages{$name}->{$short_version}->{versions}->{$version} =
                     sprintf "%s%s", $base_url, $file;
-
-                if ( $name eq $package && $otrs eq $short_version && !$params{version} ) {
-                    $wanted = $version;
-                }
             }
             else {
                 $packages{$name}->{$short_version}->{versions}->{$version} =
@@ -100,9 +117,7 @@ sub find {
     $self->_set_parsed( 1 );
     $self->_set_packages( \%packages );
 
-    return if !$packages{$package};
-    return if !$packages{$package}->{$otrs};
-    return $packages{$package}->{$otrs}->{versions}->{$wanted};
+    return 1;
 }
 
 sub _version_is_newer {

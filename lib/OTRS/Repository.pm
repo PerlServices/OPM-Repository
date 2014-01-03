@@ -12,7 +12,7 @@ use Regexp::Common qw(URI);
 
 use OTRS::Repository::Source;
 
-our $VERSION = 0.02;
+our $VERSION = 0.03;
 
 our $ALLOWED_SCHEME = 'HTTP';
 
@@ -40,6 +40,18 @@ sub find {
     }
 
     return @found;
+}
+
+sub list {
+    my ($self, %params) = @_;
+
+    my %found_packages;
+    for my $source ( @{ $self->_objects || [] } ) {
+        my @found = $source->list( %params );
+        @found_packages{@found} = (1) x @found;
+    }
+
+    return sort keys %found_packages;
 }
 
 sub BUILDARGS {
