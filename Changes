@@ -1,6 +1,11 @@
 Change history for OTRS::Repository
 ===================================
 
+0.03 2014-01-03T10:31:23
+
+  + fix min required version of List::Util
+  + add feature: list names of all packages
+
 0.02 2014-01-02T09:13:55
 
   + add feature: search for a specific version of a module
