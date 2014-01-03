@@ -5,6 +5,7 @@ Change history for OTRS::Repository
 
   + fix min required version of List::Util
   + add feature: list names of all packages
+  + added metainfo to dist.ini
 
 0.02 2014-01-02T09:13:55
 
