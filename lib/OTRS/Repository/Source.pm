@@ -10,7 +10,7 @@ use HTTP::Tiny;
 use XML::LibXML;
 use Regexp::Common qw(URI);
 
-our $VERSION = 0.03;
+our $VERSION = 0.04;
 
 our $ALLOWED_SCHEME = 'HTTP';
 
