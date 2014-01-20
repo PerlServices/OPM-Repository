@@ -19,7 +19,7 @@ $OTRS::Repository::Source::ALLOWED_SCHEME = 'file';
 
         $url =~ s{file://}{};
         my $content = do { local (@ARGV, $/) = $url; <> };
-        return { content => $content };
+        return { success => 1, content => $content };
     }
 }
 

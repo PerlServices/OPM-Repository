@@ -14,13 +14,10 @@ our $VERSION = 0.03;
 
 our $ALLOWED_SCHEME = 'HTTP';
 
-has url     => ( is => 'ro', required => 1, isa     => sub { die "No valid URI" unless $_[0] =~ m{\A$RE{URI}{$ALLOWED_SCHEME}\z} } );
-has content => ( is => 'ro', lazy     => 1, builder => sub { HTTP::Tiny->new->get( shift->url )->{content} });
-has tree    => ( is => 'ro', lazy     => 1, builder => sub {
-    my $parser = XML::LibXML->new->parse_string( shift->content );
-    $parser->getDocumentElement;
-});
-
+has url      => ( is => 'ro', required => 1, isa     => sub { die "No valid URI" unless $_[0] =~ m{\A$RE{URI}{$ALLOWED_SCHEME}\z} } );
+has content  => ( is => 'ro', lazy     => 1, builder => \&_get_content );
+has tree     => ( is => 'ro', lazy     => 1, builder => \&_build_tree );
+has error    => ( is => 'rwp' );
 has packages => ( is => 'rwp', default => sub { {} }, isa => sub { die "No hashref" unless ref $_[0] eq 'HASH' } );
 has parsed   => ( is => 'rwp', predicate => 1 );
 
@@ -136,6 +133,35 @@ sub _version_is_newer {
     }
 
     return 1;
+}
+
+sub _get_content {
+    my $self = shift;
+    my $res  = HTTP::Tiny->new->get( $self->url );
+
+    $self->_set_error( undef );
+    
+    if ( $res->{success} ) {
+        return $res->{content};
+    }
+
+    $self->_set_error( $res->{reason} );
+
+    return '<otrs_packages></otrs_packages>';
+}
+
+sub _build_tree {
+    my $self = shift;
+
+    $self->_set_error( undef );
+
+    my $tree;
+    eval {
+        my $parser = XML::LibXML->new->parse_string( $self->content );
+        $tree      = $parser->getDocumentElement;
+    } or $self->_set_error( $@ );
+
+    return $tree;
 }
 
 1;

@@ -18,14 +18,13 @@ $OTRS::Repository::Source::ALLOWED_SCHEME = 'file';
         my ($obj, $url) = @_;
 
         $url =~ s{file://}{};
+
         my $content = do { local (@ARGV, $/) = $url; <> };
-        return { content => $content };
+        return { success => 1, content => $content };
     }
 }
 
-my $base_url = File::Spec->rel2abs(
-  File::Spec->catdir( dirname( __FILE__ ), 'data' ),
-);
+my $base_url = File::Spec->abs2rel( File::Spec->catdir( dirname( __FILE__ ), 'data' ) );
 
 my $xml_file = File::Spec->catfile( $base_url, 'otrs.xml' );
 
