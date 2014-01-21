@@ -1,6 +1,10 @@
 Change history for OTRS::Repository
 ===================================
 
+0.05 2014-01-21
+
+  + fix test failures on Win32
+
 0.04 2014-01-20
 
   + better handling for invalid URLs and invalid XML
