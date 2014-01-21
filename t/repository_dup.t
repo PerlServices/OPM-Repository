@@ -24,7 +24,7 @@ $OTRS::Repository::Source::ALLOWED_SCHEME = 'file';
     }
 }
 
-my $base_url = File::Spec->rel2abs(
+my $base_url = File::Spec->abs2rel(
   File::Spec->catdir( dirname( __FILE__ ), 'data' ),
 );
 
