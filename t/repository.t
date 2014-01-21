@@ -5,6 +5,7 @@ use warnings;
 use Test::More;
 
 use File::Spec;
+use File::Spec::Unix;
 use File::Basename;
 
 use OTRS::Repository;
@@ -26,7 +27,11 @@ $OTRS::Repository::Source::ALLOWED_SCHEME = 'file';
 
 my $base_url = File::Spec->abs2rel( File::Spec->catdir( dirname( __FILE__ ), 'data' ) );
 
-my $xml_file = File::Spec->catfile( $base_url, 'otrs.xml' );
+if ( $^O =~ m{win32}i ) {
+    $base_url =~ s{\\}{/}g;
+}
+
+my $xml_file = File::Spec::Unix->catfile( $base_url, 'otrs.xml' );
 
 $base_url = 'file://' . $base_url;
 
