@@ -12,7 +12,7 @@ use Regexp::Common qw(URI);
 
 use OTRS::Repository::Source;
 
-our $VERSION = 0.06;
+our $VERSION = 0.07;
 
 our $ALLOWED_SCHEME = [ 'HTTP', 'file' ];
 
