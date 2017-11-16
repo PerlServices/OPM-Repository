@@ -26,7 +26,7 @@ my $source = OTRS::Repository::Source->new(
     url => 'file://' . $xml_file,
 );
 
-my @check_list_21 = (
+my @check_list_21 = map{ $_->{url} =~ s{.*(t/list.*)$}{$1}; $_ }(
     {
       'url' => 'file:///home/otrsvm/OTRS-Repository/.build/t/list/Calendar-1.5.1.opm',
       'name' => 'Calendar',
@@ -119,19 +119,14 @@ my @check_list_21 = (
     }
 );
 
-my @source_list = map{ $_->{url} =~ s{.build\K/[^/]+(?:/OTRS-Repository-\d+\.\d+)?}{}; $_ }$source->list(
+my @source_list = map{ $_->{url} =~ s{.*(t/list.*)$}{$1}; $_ }$source->list(
     otrs    => '2.1',
     details => 1,
 );
 
-use Data::Dumper;
-open my $fh, '>', 'test.out';
-print $fh Dumper( \@source_list );
-close $fh;
-
 is_deeply \@source_list, \@check_list_21, "list of packages for OTRS 2.1";
 
-my @check_list_all = (
+my @check_list_all = map{ $_->{url} =~ s{.*(t/list.*)$}{$1}; $_ }(
     {
       'name' => 'Calendar',
       'url' => 'file:///home/otrsvm/OTRS-Repository/.build/t/list/Calendar-1.5.1.opm',
@@ -689,7 +684,7 @@ my @check_list_all = (
     }
 );
 
-my @source_list_all = map{ $_->{url} =~ s{.build\K/[^/]+(?:/OTRS-Repository-\d+\.\d+)?}{}; $_ }$source->list(
+my @source_list_all = map{ $_->{url} =~ s{.*(t/list.*)$}{$1}; $_ }$source->list(
     details => 1,
 );
 is_deeply \@source_list_all, \@check_list_all, "list of all packages";
