@@ -87,7 +87,7 @@ sub list {
             }
         }
 
-        return @package_list;
+        return sort { $a->{name} cmp $b->{name} || $a->{version} cmp $b->{version} } @package_list;
     }
 
     return @package_names;
