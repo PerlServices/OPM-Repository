@@ -119,7 +119,7 @@ my @check_list_21 = (
     }
 );
 
-my @source_list = map{ $_->{url} =~ s{.build\K/[^/]+}{}; $_ }$source->list(
+my @source_list = map{ $_->{url} =~ s{.build\K/[^/]+(?:/OTRS-Repository-\d+\.\d+)?}{}; $_ }$source->list(
     otrs    => '2.1',
     details => 1,
 );
@@ -689,7 +689,7 @@ my @check_list_all = (
     }
 );
 
-my @source_list_all = map{ $_->{url} =~ s{.build\K/[^/]+}{}; $_ }$source->list(
+my @source_list_all = map{ $_->{url} =~ s{.build\K/[^/]+(?:/OTRS-Repository-\d+\.\d+)?}{}; $_ }$source->list(
     details => 1,
 );
 is_deeply \@source_list_all, \@check_list_all, "list of all packages";
