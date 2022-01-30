@@ -37,5 +37,6 @@ jobs:
       - run: dzil authordeps --missing | sudo cpanm --notest
       - run: dzil listdeps --author --missing | sudo cpanm --notest
       - run: dzil test --author --release
+      - run: sudo cpanm --installdeps .
       - run: prove -lv t
 
