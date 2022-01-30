@@ -31,8 +31,8 @@ jobs:
         with:
           perl-version: ${{ matrix.perl }}
           multi-thread: ${{ matrix.threaded }}
-      - run: apt install libxml2-dev
-      - run: cpanm ExtUtils::MakeMaker Module::Build Dist::Zilla
+      - run: sudo apt-get install -y libxml2-dev
+      - run: sudo cpanm ExtUtils::MakeMaker Module::Build Dist::Zilla
       - run: perl -V
       - run: |
           dzil authordeps --missing | cpanm --notest
