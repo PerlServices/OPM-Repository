@@ -8,7 +8,7 @@ use File::Spec;
 use File::Spec::Unix;
 use File::Basename;
 
-use OTRS::Repository;
+use OPM::Repository;
 
 my $base_url = File::Spec->rel2abs(
   File::Spec->catdir( dirname( __FILE__ ), 'data' ),
@@ -22,12 +22,12 @@ my $xml_file = File::Spec::Unix->catfile( $base_url, 'otrs.xml' );
 
 $base_url = 'file://' . $base_url;
 
-my $source = OTRS::Repository->new(
+my $source = OPM::Repository->new(
     sources => [ 'file://' . $xml_file ],
 );
 
 my @check_list_21 = qw(Calendar FAQ FileManager Support TimeAccounting WebMail);
-is_deeply [ $source->list( otrs => '2.1' ) ], \@check_list_21, "list of packages for OTRS 2.1";
+is_deeply [ $source->list( framework => '2.1' ) ], \@check_list_21, "list of packages for OTRS 2.1";
 
 my @check_list_all = qw(
     Calendar FAQ FileManager MasterSlave OTRSCodePolicy OTRSMasterSlave

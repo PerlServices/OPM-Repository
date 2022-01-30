@@ -1,8 +1,8 @@
-package OTRS::Repository::Source;
+package OPM::Repository::Source;
 
 use v5.10;
 
-# ABSTRACT: Parser for a single otrs.xml file
+# ABSTRACT: Parser for a single {otrs|otobo}.xml file
 
 use strict;
 use warnings;
@@ -23,17 +23,18 @@ has tree     => ( is => 'ro', lazy     => 1, builder => \&_build_tree );
 has error    => ( is => 'rwp' );
 has packages => ( is => 'rwp', default => sub { {} }, isa => sub { die "No hashref" unless ref $_[0] eq 'HASH' } );
 has parsed   => ( is => 'rwp', predicate => 1 );
+has product  => ( is => 'ro', default => sub { 'otrs' } );
 
 sub find {
     my ($self, %params) = @_;
 
     return if !exists $params{name};
-    return if !exists $params{otrs};
+    return if !exists $params{framework};
 
-    my $package  = $params{name};
-    my $otrs     = $params{otrs};
+    my $package   = $params{name};
+    my $framework = $params{framework};
 
-    if ( !defined $package || !defined $otrs ) {
+    if ( !defined $package || !defined $framework ) {
         return;
     }
 
@@ -44,10 +45,10 @@ sub find {
     my %packages = %{ $self->packages };
 
     return if !$packages{$package};
-    return if !$packages{$package}->{$otrs};
+    return if !$packages{$package}->{$framework};
 
-    my $wanted = $params{version} || $packages{$package}->{$otrs}->{latest};
-    return $packages{$package}->{$otrs}->{versions}->{$wanted};
+    my $wanted = $params{version} || $packages{$package}->{$framework}->{latest};
+    return $packages{$package}->{$framework}->{versions}->{$wanted};
 }
 
 sub list {
@@ -57,13 +58,13 @@ sub list {
         $self->_parse( %params );
     }
 
-    my %packages = %{ $self->packages };
-    my $otrs     = $params{otrs};
+    my %packages  = %{ $self->packages };
+    my $framework = $params{framework};
 
     my @package_names = sort keys %packages;
 
-    if ( $otrs ) {
-        @package_names = grep{ $packages{$_}->{$otrs} }@package_names;
+    if ( $framework ) {
+        @package_names = grep{ $packages{$_}->{$framework} }@package_names;
     }
 
     if ( $params{details} ) {
@@ -71,17 +72,17 @@ sub list {
 
         NAME:
         for my $name ( @package_names ) {
-            my @all_otrs_versions = $otrs ? $otrs : keys %{ $packages{$name} || {} };
+            my @all_framework_versions = $framework ? $framework : keys %{ $packages{$name} || {} };
 
-            OTRS_VERSION:
-            for my $otrs_version ( @all_otrs_versions ) {
+            OPM_VERSION:
+            for my $framework_version ( @all_framework_versions ) {
 
                 VERSION:
-                for my $version ( keys %{ $packages{$name}->{$otrs_version}->{versions} || {} } ) {
+                for my $version ( keys %{ $packages{$name}->{$framework_version}->{versions} || {} } ) {
                     push @package_list, {
                         name    => $name,
                         version => $version,
-                        url     => $packages{$name}->{$otrs_version}->{versions}->{$version},
+                        url     => $packages{$name}->{$framework_version}->{versions}->{$version},
                     }
                 }
             }
@@ -135,14 +136,21 @@ sub _parse {
 
         FRAMEWORK:
         for my $framework ( @frameworks ) {
-            my $otrs_version  = $framework->textContent;
-            my $short_version = join '.', (split /\./, $otrs_version, 3)[0..1];
+            my $framework_version  = $framework->textContent;
+            my $short_version = join '.', (split /\./, $framework_version, 3)[0..1];
             my $saved_version = $packages{$name}->{$short_version}->{latest};
+
+            my $minimum = $framework->findvalue('@Minimum');
+            my $maximum = $framework->findvalue('@Maximum');
 
             if ( !$saved_version ) {
                 $packages{$name}->{$short_version} = {
-                    latest   => $version,
-                    versions => {
+                    latest       => $version,
+                    min_versions => {
+                    },
+                    max_versions => {
+                    },
+                    versions     => {
                       $version => sprintf "%s%s", $base_url, $file,
                     },
                 };
@@ -195,7 +203,7 @@ sub _get_content {
 
     $self->_set_error( $res->{reason} );
 
-    return '<otrs_packages></otrs_packages>';
+    return sprintf '<%s_packages></%s_packages>', ( $self->product ) x 2;
 }
 
 sub _build_tree {

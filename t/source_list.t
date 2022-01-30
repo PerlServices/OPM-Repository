@@ -7,19 +7,19 @@ use Test::More;
 use File::Spec;
 use File::Basename;
 
-use OTRS::Repository::Source;
+use OPM::Repository::Source;
 
 my $xml_file = File::Spec->catfile( dirname( __FILE__ ), 'data', 'otrs.xml' );
 my $xml      = do { local (@ARGV, $/) = $xml_file; <> };
 my $base_url = 'http://ftp.otrs.org/pub/otrs/packages/';
 
-my $source = OTRS::Repository::Source->new(
+my $source = OPM::Repository::Source->new(
     url     => $base_url . 'otrs.xml',
     content => $xml,
 );
 
 my @check_list_21 = qw(Calendar FAQ FileManager Support TimeAccounting WebMail);
-is_deeply [ $source->list( otrs => '2.1' ) ], \@check_list_21, "list of packages for OTRS 2.1";
+is_deeply [ $source->list( framework => '2.1' ) ], \@check_list_21, "list of packages for OTRS 2.1";
 
 my @check_list_all = qw(
     Calendar FAQ FileManager MasterSlave OTRSCodePolicy OTRSMasterSlave

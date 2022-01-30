@@ -1,6 +1,6 @@
-package OTRS::Repository;
+package OPM::Repository;
 
-# ABSTRACT: parse OTRS repositories' otrs.xml files to search for add ons
+# ABSTRACT: parse OPM repositories' framework.xml files to search for add ons
 
 use strict;
 use warnings;
@@ -10,7 +10,7 @@ use List::Util qw(all);
 use Scalar::Util qw(blessed);
 use Regexp::Common qw(URI);
 
-use OTRS::Repository::Source;
+use OPM::Repository::Source;
 
 our $VERSION = 0.09;
 
@@ -27,7 +27,7 @@ has _objects => ( is => 'ro', isa => sub {
     die "no valid objects" unless 
         ref $_[0] eq 'ARRAY' 
         and
-        all { blessed $_ and $_->isa( 'OTRS::Repository::Source' ) } @{ $_[0] }
+        all { blessed $_ and $_->isa( 'OPM::Repository::Source' ) } @{ $_[0] }
 });
 
 sub find {
@@ -68,7 +68,7 @@ sub BUILDARGS {
     my %param = @args;
 
     for my $url ( @{ $param{sources} || [] } ) {
-        push @{ $param{_objects} }, OTRS::Repository::Source->new( url => $url );
+        push @{ $param{_objects} }, OPM::Repository::Source->new( url => $url );
     }
 
     return \%param;
@@ -99,19 +99,19 @@ sub _check_uri {
 
 =head1 SYNOPSIS
 
-  use OTRS::Repository;
+  use OPM::Repository;
   
-  my $repo = OTRS::Repository->new(
+  my $repo = OPM::Repository->new(
       sources => [qw!
-          http://opar.perl-services.de/otrs.xml
-          http://ftp.otrs.org/pub/otrs/packages/otrs.xml
-          http://ftp.otrs.org/pub/otrs/itsm/packages33/otrs.xml
+          https://opar.perl-services.de/framework.xml
+          https://download.znuny.org/releases/packages/framework.xml
+          https://download.znuny.org/releases/itsm/packages6/framework.xml
       !],
   );
   
   my ($url) = $repo->find(
-    name => 'ITSMCore',
-    otrs => '3.3',
+    name      => 'ITSMCore',
+    framework => '3.3',
   );
   
   print $url;
@@ -121,32 +121,32 @@ sub _check_uri {
 =head2 new
 
 C<new> has only one mandatory parameter: I<sources>. This has to be 
-an array reference of URLs for repositories' otrs.xml files.
+an array reference of URLs for repositories' framework.xml files.
 
-  my $repo = OTRS::Repository->new(
+  my $repo = OPM::Repository->new(
       sources => [qw!
-          http://opar.perl-services.de/otrs.xml
-          http://ftp.otrs.org/pub/otrs/packages/otrs.xml
-          http://ftp.otrs.org/pub/otrs/itsm/packages33/otrs.xml
+          http://opar.perl-services.de/framework.xml
+          http://ftp.framework.org/pub/framework/packages/framework.xml
+          http://ftp.framework.org/pub/framework/itsm/packages33/framework.xml
       !],
   );
 
 =head2 find
 
-Search for an add on for a given OTRS version in those repositories. It
+Search for an add on for a given OPM version in those repositories. It
 returns a list of urls if the add on was found, C<undef> otherwise.
 
   my @urls = $repo->find(
-    name => 'ITSMCore',
-    otrs => '3.3',
+    name      => 'ITSMCore',
+    framework => '3.3',
   );
 
 Find a specific version
 
   my @urls = $repo->find(
-    name    => 'ITSMCore',
-    otrs    => '3.3',
-    version => '1.4.8',
+    name      => 'ITSMCore',
+    framework => '3.3',
+    version   => '1.4.8',
   );
 
 =head2 list
@@ -156,16 +156,16 @@ List all addons found in the repositories
   my @addons = $repo->list;
   say $_ for @addons;
 
-You can also define the OTRS version
+You can also define the OPM version
 
-  my @addons = $repo->list( otrs => '5.0.x' );
+  my @addons = $repo->list( framework => '5.0.x' );
   say $_ for @addons;
 
 Both snippets print a simple list of addon names. If you want to
 to create a list with more information, you can use
 
   my @addons = $repo->list(
-      otrs    => '5.0.x',
-      details => 1,
+      framework => '5.0.x',
+      details   => 1,
   );
   say sprintf "%s (%s) on %s\n", $_->{name}, $_->{version}, $_->{url} for @addons;
