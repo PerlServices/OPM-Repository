@@ -31,12 +31,12 @@ jobs:
         with:
           perl-version: ${{ matrix.perl }}
           multi-thread: ${{ matrix.threaded }}
-      - run: sudo apt-get install -y libxml2-dev
+      - run: sudo apt-get install -y libxml2-dev cpanminus
       - run: sudo cpanm ExtUtils::MakeMaker Module::Build Dist::Zilla
       - run: perl -V
       - run: |
-          dzil authordeps --missing | cpanm --notest
-          dzil listdeps --author --missing | cpanm --notest
+          dzil authordeps --missing | sudo cpanm --notest
+          dzil listdeps --author --missing | sudo cpanm --notest
           dzil test --author --release
       - run: prove -lv t
 
