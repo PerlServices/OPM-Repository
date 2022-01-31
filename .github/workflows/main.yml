@@ -32,13 +32,12 @@ jobs:
           perl-version: ${{ matrix.perl }}
           multi-thread: ${{ matrix.threaded }}
       - run: sudo apt-get install -y libxml2-dev cpanminus
-      - run: sudo cpanm ExtUtils::MakeMaker Module::Build Dist::Zilla Data::Printer
+      - run: cpanm ExtUtils::MakeMaker Module::Build Dist::Zilla Data::Printer
       - run: perl -V
       - run: dzil authordeps --missing | cpanm --notest
-      - run: sudo cat ~/.cpanm/build.log
-      - run: dzil listdeps --author --missing | sudo cpanm --notest
+      - run: dzil listdeps --author --missing | cpanm --notest
       - run: dzil test --author --release
-      - run: sudo cpanm --installdeps .
+      - run: cpanm --installdeps .
       - run: perl -MMoo -E 'p %INC'
       - run: prove -lv t
 
