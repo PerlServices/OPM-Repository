@@ -35,10 +35,10 @@ jobs:
       - run: sudo cpanm ExtUtils::MakeMaker Module::Build Dist::Zilla Data::Printer
       - run: perl -V
       - run: dzil authordeps --missing | sudo cpanm --notest
+      - run: sudo cat ~root/.cpanm/build.log
       - run: dzil listdeps --author --missing | sudo cpanm --notest
       - run: dzil test --author --release
       - run: sudo cpanm --installdeps .
-      - run: sudo cat ~root/.cpanm/build.log
       - run: perl -MMoo -E 'p %INC'
       - run: prove -lv t
 
