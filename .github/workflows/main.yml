@@ -39,6 +39,5 @@ jobs:
       - run: dzil listdeps --author --missing | cpanm --notest
       - run: dzil test --author --release
       - run: cpanm --installdeps .
-      - run: perl -MMoo -E 'p %INC'
       - run: prove -lv t
 
