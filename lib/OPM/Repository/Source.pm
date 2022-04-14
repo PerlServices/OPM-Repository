@@ -7,13 +7,13 @@ use v5.10;
 use strict;
 use warnings;
 
+# VERSION
+
 use Moo;
 use HTTP::Tiny;
 use HTTP::Tiny::FileProtocol;
 use XML::LibXML;
 use Regexp::Common qw(URI);
-
-our $VERSION = 0.08;
 
 our $ALLOWED_SCHEME = [ 'HTTP', 'file' ];
 
@@ -88,7 +88,7 @@ sub list {
             }
         }
 
-        return sort { $a->{name} cmp $b->{name} || $a->{version} cmp $b->{version} } @package_list;
+        @package_names = sort { $a->{name} cmp $b->{name} || $a->{version} cmp $b->{version} } @package_list;
     }
 
     return @package_names;
@@ -221,3 +221,59 @@ sub _build_tree {
 }
 
 1;
+
+=head1 SYNOPSIS
+
+    use OPM::Repository::Source;
+
+    my $source = OPM::Repository::Source->new(
+        url => 'http://opar.perl-services.de/otrs.xml',
+    );
+
+    my @packages_in_source = $source->list;
+
+    # check if TicketTemplates is avaialable at the
+    # given repository/source
+    my $found = $source->find(
+        name      => 'TicketTemplates',
+        framework => '3.0',
+    );
+
+=head1 ATTRIBUTES
+
+=over 4
+
+=item * content
+
+The content of the sources' I<{otrs,otobo}.xml> file.
+
+=item * error
+
+If an error occurs, the message is in C<error>.
+
+=item * has_parsed
+
+=item * packages
+
+A hash reference that contains information about all packages
+that are available in the repository/source.
+
+=item * parsed
+
+=item * product
+
+I<otrs|otobo>
+
+=item * tree
+
+=item * url
+
+URL of the I<{otrs,otobo}.xml> file that represents the repository.
+
+=back
+
+=head1 METHODS
+
+=head2 find
+
+=head2 list

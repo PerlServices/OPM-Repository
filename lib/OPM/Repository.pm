@@ -5,14 +5,14 @@ package OPM::Repository;
 use strict;
 use warnings;
 
+# VERSION
+
 use Moo;
 use List::Util qw(all);
 use Scalar::Util qw(blessed);
 use Regexp::Common qw(URI);
 
 use OPM::Repository::Source;
-
-our $VERSION = 0.09;
 
 our $ALLOWED_SCHEME = [ 'HTTP', 'file' ];
 
@@ -53,11 +53,15 @@ sub list {
         push @detailed_list, @found;
     }
 
+    my @packages;
     if ( $params{details} ) {
-        return sort { $a->{name} cmp $b->{name} || $a->{version} cmp $b->{version} }@detailed_list;
+        @packages = sort { $a->{name} cmp $b->{name} || $a->{version} cmp $b->{version} }@detailed_list;
+    }
+    else {
+        @packages = sort keys %found_packages;
     }
 
-    return sort keys %found_packages;
+    return @packages;
 }
 
 sub BUILDARGS {
@@ -97,6 +101,10 @@ sub _check_uri {
 
 1;
 
+=for Pod::Coverage
+
+=head2 BUILDARGS
+
 =head1 SYNOPSIS
 
   use OPM::Repository;
@@ -115,6 +123,14 @@ sub _check_uri {
   );
   
   print $url;
+
+=head1 ATTRIBUTES
+
+=over 4
+
+=item * sources
+
+=back
 
 =head1 METHODS
 
