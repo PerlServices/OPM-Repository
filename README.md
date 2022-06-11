@@ -93,7 +93,7 @@ my @addons = $repo->list( framework => '5.0.x' );
 say $_ for @addons;
 ```
 
-Both snippets print a simple list of addon names. If you want to
+Both snippets print a simple list of addon names. If you want
 to create a list with more information, you can use
 
 ```perl
